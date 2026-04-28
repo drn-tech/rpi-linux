@@ -1,0 +1,48 @@
+// Definitions for eight channel I2S input for Pi5 / CM5 (with Pi as master)
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2712";
+
+	fragment@0 {
+		target = <&gpio>;
+		__overlay__ {
+			rp1_i2s0_8ch_input: rp1_i2s0_8ch_input {
+				function = "i2s0";
+				pins = "gpio18", "gpio19", "gpio20", "gpio22", "gpio24", "gpio26";
+				bias-disable;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s_clk_producer>;
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&rp1_i2s0_8ch_input>;
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target-path = "/";
+		__overlay__ {
+			dummy-codec {
+				#sound-dai-cells = <0>;
+				compatible = "snd-soc-dummy";
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <&sound>;
+		__overlay__ {
+			compatible = "rpi,rpi-i2s-8ch-input";
+			i2s-controller = <&i2s_clk_producer>;
+			status = "okay";
+		};
+	};
+};
