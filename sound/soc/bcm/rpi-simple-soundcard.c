@@ -191,6 +191,41 @@ static int adau1977_init(struct snd_soc_pcm_runtime *rtd)
 			11289600, SND_SOC_CLOCK_IN);
 }
 
+SND_SOC_DAILINK_DEFS(rpi_i2s_8ch_input,
+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+	DAILINK_COMP_ARRAY(COMP_CODEC("snd-soc-dummy", "snd-soc-dummy-dai")),
+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+
+static int rpi_i2s_8ch_input_init(struct snd_soc_pcm_runtime *rtd)
+{
+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
+
+	/* set limits of 8 channels and 192ksps sample rate
+	 */
+	 codec_dai->driver->capture.channels_max = 8;
+	 codec_dai->driver->capture.rates = SNDRV_PCM_RATE_8000_192000;
+
+	 return 0;
+}
+
+static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
+	{
+	 		.name           = "Eight Channel I2S Input",
+	 		.stream_name    = "Eight Channel I2S Input",
+	 		.dai_fmt        = SND_SOC_DAIFMT_I2S |
+	 							SND_SOC_DAIFMT_NB_NF |
+	 							SND_SOC_DAIFMT_CBS_CFS,
+	 		.init           = rpi_i2s_8ch_input_init,
+	 		SND_SOC_DAILINK_REG(rpi_i2s_8ch_input),
+	},
+};
+
+static struct snd_rpi_simple_drvdata drvdata_rpi_i2s_8ch_input = {
+	.card_name = "snd_rpi_i2s_8ch_input",
+	.dai       = snd_rpi_i2s_8ch_input_dai,
+	.fixed_bclk_ratio = 64,
+};
+
 SND_SOC_DAILINK_DEFS(adau1977,
 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
 	DAILINK_COMP_ARRAY(COMP_CODEC("adau1977.1-0011", "adau1977-hifi")),
@@ -504,6 +539,8 @@ static struct snd_rpi_simple_drvdata drvdata_pifi_mini_210 = {
 };
 
 static const struct of_device_id snd_rpi_simple_of_match[] = {
+	{ .compatible = "rpi,rpi-i2s-8ch-input",
+		.data = (void *) &drvdata_rpi_i2s_8ch_input },
 	{ .compatible = "adi,adau1977-adc",
 		.data = (void *) &drvdata_adau1977 },
 	{ .compatible = "googlevoicehat,googlevoicehat-soundcard",
