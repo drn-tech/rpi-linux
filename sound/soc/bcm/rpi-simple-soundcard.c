@@ -191,6 +191,28 @@ static int adau1977_init(struct snd_soc_pcm_runtime *rtd)
 			11289600, SND_SOC_CLOCK_IN);
 }
 
+SND_SOC_DAILINK_DEFS(adau1977,
+	DAILINK_COMP_ARRAY(COMP_EMPTY()),
+	DAILINK_COMP_ARRAY(COMP_CODEC("adau1977.1-0011", "adau1977-hifi")),
+	DAILINK_COMP_ARRAY(COMP_EMPTY()));
+
+static struct snd_soc_dai_link snd_rpi_adau1977_dai[] = {
+	{
+	.name           = "adau1977",
+	.stream_name    = "ADAU1977",
+	.init           = adau1977_init,
+	.dai_fmt = SND_SOC_DAIFMT_I2S |
+		SND_SOC_DAIFMT_NB_NF |
+		SND_SOC_DAIFMT_CBP_CFP,
+	SND_SOC_DAILINK_REG(adau1977),
+	},
+};
+
+static struct snd_rpi_simple_drvdata drvdata_adau1977 = {
+	.card_name = "snd_rpi_adau1977_adc",
+	.dai       = snd_rpi_adau1977_dai,
+};
+
 SND_SOC_DAILINK_DEFS(rpi_i2s_8ch_input,
 	DAILINK_COMP_ARRAY(COMP_EMPTY()),
 	DAILINK_COMP_ARRAY(COMP_CODEC("snd-soc-dummy", "snd-soc-dummy-dai")),
@@ -212,9 +234,9 @@ static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
 	{
 	 		.name           = "Eight Channel I2S Input",
 	 		.stream_name    = "Eight Channel I2S Input",
-	 		.dai_fmt        = SND_SOC_DAIFMT_I2S |
-	 							SND_SOC_DAIFMT_NB_NF |
-	 							SND_SOC_DAIFMT_CBS_CFS,
+			.dai_fmt        = SND_SOC_DAIFMT_I2S |
+								SND_SOC_DAIFMT_NB_NF |
+								SND_SOC_DAIFMT_CBC_CFC,
 	 		.init           = rpi_i2s_8ch_input_init,
 	 		SND_SOC_DAILINK_REG(rpi_i2s_8ch_input),
 	},
@@ -224,28 +246,6 @@ static struct snd_rpi_simple_drvdata drvdata_rpi_i2s_8ch_input = {
 	.card_name = "snd_rpi_i2s_8ch_input",
 	.dai       = snd_rpi_i2s_8ch_input_dai,
 	.fixed_bclk_ratio = 64,
-};
-
-SND_SOC_DAILINK_DEFS(adau1977,
-	DAILINK_COMP_ARRAY(COMP_EMPTY()),
-	DAILINK_COMP_ARRAY(COMP_CODEC("adau1977.1-0011", "adau1977-hifi")),
-	DAILINK_COMP_ARRAY(COMP_EMPTY()));
-
-static struct snd_soc_dai_link snd_rpi_adau1977_dai[] = {
-	{
-	.name           = "adau1977",
-	.stream_name    = "ADAU1977",
-	.init           = adau1977_init,
-	.dai_fmt = SND_SOC_DAIFMT_I2S |
-		SND_SOC_DAIFMT_NB_NF |
-		SND_SOC_DAIFMT_CBP_CFP,
-	SND_SOC_DAILINK_REG(adau1977),
-	},
-};
-
-static struct snd_rpi_simple_drvdata drvdata_adau1977 = {
-	.card_name = "snd_rpi_adau1977_adc",
-	.dai       = snd_rpi_adau1977_dai,
 };
 
 SND_SOC_DAILINK_DEFS(gvchat,
@@ -539,10 +539,10 @@ static struct snd_rpi_simple_drvdata drvdata_pifi_mini_210 = {
 };
 
 static const struct of_device_id snd_rpi_simple_of_match[] = {
-	{ .compatible = "rpi,rpi-i2s-8ch-input",
-		.data = (void *) &drvdata_rpi_i2s_8ch_input },
 	{ .compatible = "adi,adau1977-adc",
 		.data = (void *) &drvdata_adau1977 },
+	{ .compatible = "rpi,rpi-i2s-8ch-input",
+		.data = (void *) &drvdata_rpi_i2s_8ch_input },
 	{ .compatible = "googlevoicehat,googlevoicehat-soundcard",
 		.data = (void *) &drvdata_googlevoicehat },
 	{ .compatible = "hifiberrydacplusdsp,hifiberrydacplusdsp-soundcard",
