@@ -222,10 +222,10 @@ static int rpi_i2s_8ch_input_init(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
 
-	/* set limits of 8 channels and 192ksps sample rate
-	 */
 	 codec_dai->driver->capture.channels_max = 8;
-	 codec_dai->driver->capture.rates = SNDRV_PCM_RATE_8000_192000;
+	 codec_dai->driver->capture.rates = SNDRV_PCM_RATE_8000_96000;
+	 codec_dai->driver->capture.formats = SNDRV_PCM_FMTBIT_S24_LE;
+	 codec_dai->driver->capture.sig_bits = 24;
 
 	 return 0;
 }
