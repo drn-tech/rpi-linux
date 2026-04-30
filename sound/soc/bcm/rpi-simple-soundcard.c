@@ -224,8 +224,6 @@ static int rpi_i2s_8ch_input_init(struct snd_soc_pcm_runtime *rtd)
 
 	 codec_dai->driver->capture.channels_max = 8;
 	 codec_dai->driver->capture.rates = SNDRV_PCM_RATE_8000_96000;
-	 codec_dai->driver->capture.formats = SNDRV_PCM_FMTBIT_S24_LE;
-	 codec_dai->driver->capture.sig_bits = 24;
 
 	 return 0;
 }
@@ -245,7 +243,7 @@ static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
 static struct snd_rpi_simple_drvdata drvdata_rpi_i2s_8ch_input = {
 	.card_name = "snd_rpi_i2s_8ch_input",
 	.dai       = snd_rpi_i2s_8ch_input_dai,
-	.fixed_bclk_ratio = 192,
+	.fixed_bclk_ratio = 64,
 };
 
 SND_SOC_DAILINK_DEFS(gvchat,
