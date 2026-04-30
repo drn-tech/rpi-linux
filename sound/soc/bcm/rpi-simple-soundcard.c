@@ -245,7 +245,7 @@ static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
 static struct snd_rpi_simple_drvdata drvdata_rpi_i2s_8ch_input = {
 	.card_name = "snd_rpi_i2s_8ch_input",
 	.dai       = snd_rpi_i2s_8ch_input_dai,
-	.fixed_bclk_ratio = 64,
+	.fixed_bclk_ratio = 192,
 };
 
 SND_SOC_DAILINK_DEFS(gvchat,
