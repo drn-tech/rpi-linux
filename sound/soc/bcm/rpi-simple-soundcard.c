@@ -227,10 +227,14 @@ static int rpi_i2s_8ch_input_init(struct snd_soc_pcm_runtime *rtd)
 	 codec_dai->driver->capture.rates        = SNDRV_PCM_RATE_8000_96000;
 	 codec_dai->driver->capture.formats      = SNDRV_PCM_FMTBIT_S32_LE;
 
-	 snd_pcm_hw_constraint_msbits(rtd->pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream, 0, 32, 24);
-	 snd_soc_pcm_set_hw_constraint(rtd->pcm, SNDRV_PCM_HW_PARAM_FORMAT, SNDRV_PCM_FMTBIT_S32_LE);
-
 	 return 0;
+}
+
+static int rpi_i2s_8ch_input_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_hw_params *params)
+{
+    struct snd_pcm_runtime *runtime = substream->runtime;
+
+    return snd_pcm_hw_constraint_msbits(runtime, 0, 32, 24);
 }
 
 static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
@@ -241,6 +245,7 @@ static struct snd_soc_dai_link snd_rpi_i2s_8ch_input_dai[] = {
 								SND_SOC_DAIFMT_NB_NF |
 								SND_SOC_DAIFMT_CBC_CFC,
 	 		.init           = rpi_i2s_8ch_input_init,
+			.hw_params = rpi_i2s_8ch_input_hw_params,
 	 		SND_SOC_DAILINK_REG(rpi_i2s_8ch_input),
 	},
 };
