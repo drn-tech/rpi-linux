@@ -226,8 +226,10 @@ static int rpi_i2s_8ch_input_init(struct snd_soc_pcm_runtime *rtd)
 	 codec_dai->driver->capture.channels_max = 8;
 	 codec_dai->driver->capture.rates        = SNDRV_PCM_RATE_8000_96000;
 	 codec_dai->driver->capture.formats      = SNDRV_PCM_FMTBIT_S32_LE;
-	 codec_dai->driver->capture.sig_bits     = 24;
- 
+
+	 snd_pcm_hw_constraint_msbits(rtd->pcm->streams[SNDRV_PCM_STREAM_CAPTURE].substream, 0, 32, 24);
+	 snd_soc_pcm_set_hw_constraint(rtd->pcm, SNDRV_PCM_HW_PARAM_FORMAT, SNDRV_PCM_FMTBIT_S32_LE);
+
 	 return 0;
 }
 
